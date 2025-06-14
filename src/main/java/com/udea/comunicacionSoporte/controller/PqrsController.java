@@ -2,7 +2,6 @@ package com.udea.comunicacionSoporte.controller;
 
 import com.udea.comunicacionSoporte.dto.PqrsDTO;
 import com.udea.comunicacionSoporte.service.PqrsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
