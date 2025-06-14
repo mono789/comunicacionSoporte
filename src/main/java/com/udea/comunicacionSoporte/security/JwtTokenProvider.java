@@ -7,14 +7,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 
 @Component
 public class JwtTokenProvider {
 
-    private final byte[] secretKey;
+    private final Key secretKey;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
-        this.secretKey = Base64.getDecoder().decode(secret);
+        byte[] decodedKey = Base64.getDecoder().decode(secret);
+        this.secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
     }
 
     public String generarToken(Usuario usuario) {
@@ -22,7 +25,7 @@ public class JwtTokenProvider {
                 .setSubject(usuario.getCorreoUsuario())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hora
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
