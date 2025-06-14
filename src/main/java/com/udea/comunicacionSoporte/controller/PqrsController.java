@@ -13,8 +13,11 @@ import java.util.List;
 @CrossOrigin(origins = "*") // Ajusta si usas frontend separado
 public class PqrsController {
 
-    @Autowired
-    private PqrsService pqrsService;
+    private final PqrsService pqrsService;
+
+    public PqrsController(PqrsService pqrsService) {
+        this.pqrsService = pqrsService;
+    }
 
     @GetMapping
     public ResponseEntity<List<PqrsDTO>> listarTodas() {
