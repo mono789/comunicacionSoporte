@@ -67,7 +67,8 @@ class UsuarioServiceTest {
     void testLoginUsuarioNoExiste() {
         when(usuarioRepo.findByCorreoUsuario("x@x.com")).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> usuarioService.login(new LoginRequestDTO("x@x.com", "clave")));
+        LoginRequestDTO request = new LoginRequestDTO("x@x.com", "clave");
+        assertThrows(RuntimeException.class, () -> usuarioService.login(request));
     }
 
     @Test
@@ -78,6 +79,30 @@ class UsuarioServiceTest {
         when(usuarioRepo.findByCorreoUsuario("a@a.com")).thenReturn(Optional.of(u));
         when(passwordEncoder.matches("clave", "hash")).thenReturn(false);
 
-        assertThrows(RuntimeException.class, () -> usuarioService.login(new LoginRequestDTO("a@a.com", "clave")));
+        LoginRequestDTO request = new LoginRequestDTO("a@a.com", "clave");
+        assertThrows(RuntimeException.class, () -> usuarioService.login(request));
+    }
+
+    @Test
+    void testRegistrarUsuarioCorreoExistente() {
+        RegistroUsuarioDTO dto = new RegistroUsuarioDTO("existe@test.com", "clave123", "cliente");
+        
+        when(usuarioRepo.existsByCorreoUsuario(dto.getCorreo())).thenReturn(true);
+        
+        assertThrows(RuntimeException.class, () -> usuarioService.registrarUsuario(dto));
+        verify(usuarioRepo).existsByCorreoUsuario(dto.getCorreo());
+        verify(usuarioRepo, never()).save(any());
+    }
+
+    @Test
+    void testRegistrarUsuarioTipoInvalido() {
+        RegistroUsuarioDTO dto = new RegistroUsuarioDTO("nuevo@test.com", "clave123", "tipoInvalido");
+        
+        when(usuarioRepo.existsByCorreoUsuario(dto.getCorreo())).thenReturn(false);
+        when(tipoUsuarioRepo.findByTipoUsuario("tipoInvalido")).thenReturn(Optional.empty());
+        
+        assertThrows(RuntimeException.class, () -> usuarioService.registrarUsuario(dto));
+        verify(tipoUsuarioRepo).findByTipoUsuario("tipoInvalido");
+        verify(usuarioRepo, never()).save(any());
     }
 }

@@ -35,6 +35,9 @@ public class JwtTokenProvider {
     }
 
     public boolean esValido(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            return false;
+        }
         try {
             JwtParser parser = Jwts.parserBuilder().setSigningKey(secretKey).build();
             parser.parseClaimsJws(token);
