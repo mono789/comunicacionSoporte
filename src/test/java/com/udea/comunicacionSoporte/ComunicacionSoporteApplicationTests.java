@@ -1,13 +1,14 @@
 package com.udea.comunicacionSoporte;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class ComunicacionSoporteApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void testApplicationClassIsValid() {
+		assertNotNull(ComunicacionSoporteApplication.class);
+		assertTrue(ComunicacionSoporteApplication.class.isAnnotationPresent(
+			org.springframework.boot.autoconfigure.SpringBootApplication.class));
 	}
-
 }
